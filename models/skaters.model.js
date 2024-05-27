@@ -78,7 +78,7 @@ const updateState = async (email, estado) => {
         UPDATE skaters SET 
         estado = $2 
         WHERE email = $1 
-        RETURNING *
+        RETURNING *;
         `,
         values: [email, estado]
     }
@@ -86,6 +86,7 @@ const updateState = async (email, estado) => {
     const { rows } = await pool.query(query);
     return rows[0];
 }
+
 
 export const SkaterModel = {
     getAll,

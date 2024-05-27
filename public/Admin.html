@@ -29,40 +29,55 @@
           <th scope="col">Estado</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Tony Hawk</td>
-          <td>12</td>
-          <td>Kickflip</td>
-          <td><input type="checkbox" checked /></td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Evelien Bouilliart</td>
-          <td>10</td>
-          <td>Heelflip</td>
-          <td><input type="checkbox" checked /></td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Danny Way</td>
-          <td>8</td>
-          <td>Ollie</td>
-          <td><input type="checkbox" /></td>
-        </tr>
+      <tbody id="skatersTableBody">
+        <!-- Skaters aparecerán aquí -->
       </tbody>
     </table>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const tbody = document.querySelector('#skatersTableBody');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { data } = await axios.get('/api/v1/skaters/skaters');
+        const skaters = data.skaters;
+        tbody.innerHTML = "";
+
+        skaters.forEach((s, index) => {
+          tbody.innerHTML += `
+              <tr>
+                <th scope="row">${index + 1}</th>
+                <td><div style='background-image: url("./assets/images/${s.foto}"); background-size: cover;'></div></td>
+                <td>${s.nombre}</td>
+                <td>${s.anos_experiencia}</td>
+                <td>${s.especialidad}</td>
+                <td>
+                  <input type="checkbox" ${s.estado ? 'checked' : ''} onchange="changeStatus('${s.email}', this.checked)">
+                </td>
+              </tr>
+            `;
+        });
+      } catch (error) {
+        console.log(error);
+        alert(error.response.data.msg);
+      }
+    });
+
+    async function changeStatus(email, newState) {
+      try {
+        await axios.put('/api/v1/skaters/admin', { email, estado: newState });
+        alert('Estado actualizado correctamente');
+      } catch (error) {
+        console.log(error);
+        alert('Error al cambiar el estado');
+      }
+    }
+  </script>
 </body>
 
 </html>

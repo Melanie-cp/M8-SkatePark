@@ -26,6 +26,10 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/admin', (req, res) => {
+    res.sendFile(__dirname + '/public/Admin.html');
+});
+
 app.use('*', (_, res) => {
     res.status(404).json({ ok: false, msg: 'ruta no configurada 😐' })
 })

@@ -119,11 +119,8 @@ const updateSkater = async (req, res) => {
 // /api/v1/skaters/admin
 const updateState = async (req, res) => {
     try {
-
         const { email, estado } = req.body;
-
         const skater = await SkaterModel.updateState(email, estado);
-
         return res.json({ ok: true, skater });
     } catch (error) {
         console.log(error);
