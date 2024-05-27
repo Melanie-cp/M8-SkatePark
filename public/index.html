@@ -30,42 +30,45 @@
           <th scope="col">Estado</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Tony Hawk</td>
-          <td>12</td>
-          <td>Kickflip</td>
-          <td class="text-success font-weight-bold">Aprobado</td>
-        </tr>
-        <tr>
-          <th scope="row">2</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Evelien Bouilliart</td>
-          <td>10</td>
-          <td>Heelflip</td>
-          <td class="text-success font-weight-bold">Aprobado</td>
-        </tr>
-        <tr>
-          <th scope="row">3</th>
-          <td>
-            <div></div>
-          </td>
-          <td>Danny Way</td>
-          <td>8</td>
-          <td>Ollie</td>
-          <td class="text-warning font-weight-bold">En revisión</td>
-        </tr>
+      <tbody id="skatersTableBody">
+        <!-- Skaters aparecerán aquí -->
       </tbody>
     </table>
-    <a href="#">Iniciar Sesión</a> |
-    <a href="#">Registrarme</a>
+    <a href="Login.html">Iniciar Sesión</a> |
+    <a href="Registro.html">Registrarme</a>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    const tbody = document.querySelector('#skatersTableBody');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { data } = await axios.get('/api/v1/skaters/skaters');
+        const skaters = data.skaters;
+        tbody.innerHTML = "";
+
+        skaters.forEach(s => {
+          tbody.innerHTML += `
+                <tr>
+                    <th scope="row">${s.id}</th>
+                    <td><div style='background-image: url("./assets/images/${s.foto}"); background-size: cover;'></div></td>
+                    <td>${s.nombre}</td>
+                    <td>${s.anos_experiencia}</td>
+                    <td>${s.especialidad}</td>
+                    ${s.estado ? '<td class="text-success font-weight-bold">Aprobado</td>' : '<td class="text-warning font-weight-bold">En revisión</td>'}
+                </tr>
+            `;
+        });
+      } catch (error) {
+        console.log(error)
+        alert(error.response.data.msg)
+      }
+    });
+  </script>
 </body>
 
 </html>
