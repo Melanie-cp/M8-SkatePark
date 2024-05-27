@@ -18,41 +18,107 @@
     <h2>Datos del perfil</h2>
     <hr class="w-50" />
 
-    <form>
+    <form id="updateDatosForm">
       <div class="form-group row w-50 m-auto">
         <div class="form-group col-12 col-sm-6">
           <label>Email</label>
-          <input class="form-control m-auto" disabled value="tonyhawk@skate.com" />
+          <input id="email" name="email" class="form-control m-auto" disabled />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Nombre</label>
-          <input class="form-control m-auto" value="Tony Hawk" />
+          <input id="nombre" name="nombre" class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Password</label>
-          <input type="password" class="form-control m-auto" value="12345678" />
+          <input id="password" name="password" type="password" class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Repita la password</label>
-          <input type="password" class="form-control m-auto" value="12345678" />
+          <input id="confirmPassword" name="confirmPassword" type="password" class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Años de experiencia</label>
-          <input class="form-control m-auto" value="12" />
+          <input id="anos_experiencia" name="anos_experiencia" class="form-control m-auto" />
         </div>
         <div class="form-group col-12 col-sm-6">
           <label>Especialidad</label>
-          <input class="form-control m-auto" value="Kickflip" />
+          <input id="especialidad" name="especialidad" class="form-control m-auto" />
         </div>
       </div>
       <div class="mb-1">
-        <button class="btn btn-primary">Actualizar</button>
+        <button id="update_button" type="submit" class="btn btn-primary">Actualizar</button>
       </div>
       <div>
-        <button class="btn btn-danger">Eliminar cuenta</button>
+        <button id="delete_button" type="button" class="btn btn-danger">Eliminar cuenta</button>
       </div>
     </form>
   </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const email = localStorage.getItem('email');
+      if (!email) {
+        alert('No se encontró el usuario. Inicia sesión nuevamente.');
+        window.location.href = 'Login.html';
+      } else {
+        document.getElementById('email').value = email;
+      }
+    });
+
+    const updateForm = document.getElementById('updateDatosForm');
+    updateForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = localStorage.getItem('email');
+      const nombre = document.getElementById('nombre').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const anos_experiencia = document.getElementById('anos_experiencia').value;
+      const especialidad = document.getElementById('especialidad').value;
+
+      if (password !== confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+
+      try {
+        const response = await axios.put('/api/v1/skaters/edit', {
+          email,
+          nombre,
+          password,
+          anos_experiencia,
+          especialidad
+        });
+        alert('Datos actualizados correctamente');
+      } catch (error) {
+        console.error(error);
+        alert('Error al actualizar los datos');
+      }
+    });
+
+    const deleteButton = document.getElementById('delete_button');
+    deleteButton.addEventListener('click', async () => {
+      const email = localStorage.getItem('email');
+      if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
+        try {
+          const response = await axios.delete('/api/v1/skaters/delete', {
+            data: { email }
+          });
+          alert('Cuenta eliminada correctamente');
+          localStorage.removeItem('email');
+          window.location.href = 'Login.html';
+        } catch (error) {
+          console.error(error);
+          alert('Error al eliminar la cuenta');
+        }
+      }
+    });
+  </script>
+  </script>
 </body>
 
 </html>

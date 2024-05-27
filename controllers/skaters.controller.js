@@ -87,9 +87,70 @@ const register = async (req, res) => {
     }
 };
 
+// /api/v1/skaters/edit
+const updateSkater = async (req, res) => {
+    try {
+        const { email, nombre, password, anos_experiencia, especialidad } = req.body;
+
+        // Generar nuevo hash de la contraseña si se proporciona
+        let hashedPassword;
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password, salt);
+        }
+
+        const skater = {
+            email,
+            nombre,
+            password: hashedPassword,
+            anos_experiencia,
+            especialidad
+        };
+
+        const updatedSkater = await SkaterModel.update(skater);
+        return res.json(updatedSkater);
+    } catch (error) {
+        console.log(error);
+        const { code, msg } = handleErrorDatabase(error);
+        return res.status(code).json({ ok: false, msg });
+    }
+}
+
+// /api/v1/skaters/admin
+const updateState = async (req, res) => {
+    try {
+
+        const { email, estado } = req.body;
+
+        const skater = await SkaterModel.updateState(email, estado);
+
+        return res.json({ ok: true, skater });
+    } catch (error) {
+        console.log(error);
+        const { code, msg } = handleErrorDatabase(error);
+        return res.status(code).json({ ok: false, msg });
+    }
+}
+
+// /api/v1/skaters/delete
+const removeSkater = async (req, res) => {
+    try {
+        const { email } = req.body
+        const skater = await SkaterModel.remove(email)
+        return res.status(201).json({ ok: true, skater });
+    } catch (error) {
+        console.log(error);
+        const { code, msg } = handleErrorDatabase(error);
+        return res.status(code).json({ ok: false, msg });
+    }
+}
+
 
 export const SkaterController = {
     getAllSkaters,
     login,
-    register
+    register,
+    updateSkater,
+    updateState,
+    removeSkater
 }

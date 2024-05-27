@@ -54,8 +54,7 @@ const remove = async (email) => {
     return rows[0];
 }
 
-const update = async (email, { nombre, password, anos_experiencia, especialidad }) => {
-
+const update = async ({ email, nombre, password, anos_experiencia, especialidad }) => {
     const query = {
         text: `
         UPDATE skaters SET 
@@ -64,7 +63,7 @@ const update = async (email, { nombre, password, anos_experiencia, especialidad 
         anos_experiencia = $3, 
         especialidad = $4 
         WHERE email = $5 
-        RETURNING *
+        RETURNING *;
         `,
         values: [nombre, password, anos_experiencia, especialidad, email]
     };
@@ -73,15 +72,15 @@ const update = async (email, { nombre, password, anos_experiencia, especialidad 
     return rows[0];
 }
 
-const updateState = async (email, state) => {
+const updateState = async (email, estado) => {
     const query = {
-        text:
-            `UPDATE skaters SET 
+        text: `
+        UPDATE skaters SET 
         estado = $2 
         WHERE email = $1 
         RETURNING *
         `,
-        values: [email, state]
+        values: [email, estado]
     }
 
     const { rows } = await pool.query(query);
