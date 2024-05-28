@@ -53,6 +53,7 @@
       <p><a href="Login.html"> Iniciar sesión</a></p>
     </form>
   </div>
+  <a href="index.html">Volver al inicio</a>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -70,8 +71,9 @@
         });
 
         localStorage.setItem('email', data.skater.email);
+        localStorage.setItem('token', data.token);
         alert('Usuario creado... redirigiendo');
-        window.location.href = 'Login.html';
+        window.location.href = 'Datos.html';
       } catch (error) {
         console.log(error);
         alert(error.response.data.msg);

@@ -33,6 +33,7 @@
       <p>¿Aún no tienes cuenta? <a href="Registro.html">Regístrate</a></p>
     </form>
   </div>
+  <a href="index.html">Volver al inicio</a>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
@@ -52,11 +53,12 @@
         const { data } = await axios.post('/api/v1/skaters/login', { email, password });
 
         localStorage.setItem('email', email);
+        localStorage.setItem('token', data.token);
         window.location.href = 'Datos.html';
 
       } catch (error) {
-        console.error(error);
-        alert(error);
+        console.log(error);
+        alert(error.response.data.msg);
       }
     });
   </script>

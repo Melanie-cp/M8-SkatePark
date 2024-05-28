@@ -53,12 +53,23 @@
       </div>
     </form>
   </div>
+  <a href="index.html">Volver al inicio</a>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
+    const token = localStorage.getItem('token')
+    if (!token) {
+      window.location.href = 'Login.html';
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       const email = localStorage.getItem('email');
@@ -92,11 +103,12 @@
           password,
           anos_experiencia,
           especialidad
-        });
+        }, config);
         alert('Datos actualizados correctamente');
+        window.location.href = 'index.html';
       } catch (error) {
-        console.error(error);
-        alert('Error al actualizar los datos');
+        console.log(error);
+        alert(error.response.data.msg);
       }
     });
 
@@ -106,18 +118,21 @@
       if (confirm('¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer.')) {
         try {
           const response = await axios.delete('/api/v1/skaters/delete', {
-            data: { email }
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+            data: {
+              email
+            }
           });
           alert('Cuenta eliminada correctamente');
-          localStorage.removeItem('email');
-          window.location.href = 'Login.html';
+          window.location.href = 'index.html';
         } catch (error) {
-          console.error(error);
-          alert('Error al eliminar la cuenta');
+          console.log(error);
+          alert(error.response.data.msg);
         }
       }
     });
-  </script>
   </script>
 </body>
 

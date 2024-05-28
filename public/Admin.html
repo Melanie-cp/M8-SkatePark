@@ -35,6 +35,8 @@
     </table>
   </div>
 
+  <a href="index.html">Volver al inicio</a>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -74,7 +76,7 @@
         alert('Estado actualizado correctamente');
       } catch (error) {
         console.log(error);
-        alert('Error al cambiar el estado');
+        alert(error.response.data.msg);
       }
     }
   </script>

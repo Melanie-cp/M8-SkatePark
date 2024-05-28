@@ -23,24 +23,32 @@ const getAllSkaters = async (req, res) => {
 
 // /api/v1/skaters/login
 const login = async (req, res) => {
-    const { email, password } = req.body;
-
     try {
+        const { email, password } = req.body;
         const skater = await SkaterModel.findOneByEmail(email);
 
-        if (!skater) {
-            return res.status(401).json({ ok: false, msg: 'Usuario no encontrado' });
-        }
+        if (!skater) return res.status(400).json({
+            ok: false,
+            msg: 'Usuario no encontrado'
+        });
 
         const validPassword = await bcrypt.compare(password, skater.password);
 
-        if (!validPassword) {
-            return res.status(401).json({ ok: false, msg: 'Contraseña incorrecta' });
-        }
+        if (!validPassword) return res.status(401).json({
+            ok: false,
+            msg: 'Contraseña incorrecta'
+        });
 
-        const token = jwt.sign({ email: skater.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            { email: skater.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-        return res.status(200).json({ ok: true, token });
+        return res.status(200).json({
+            token,
+            email: skater.email
+        });
     } catch (error) {
         console.log(error);
         const { code, msg } = handleErrorDatabase(error);
@@ -54,14 +62,20 @@ const register = async (req, res) => {
         const { email, nombre, password, anos_experiencia, especialidad } = req.body;
 
         if (!req.files || !req.files.foto) {
-            return res.status(400).json({ ok: false, msg: 'No se ha subido ninguna foto' });
+            return res.status(400).json({
+                ok: false,
+                msg: 'No se ha subido ninguna foto'
+            });
         }
 
         const foto = req.files.foto;
 
         const existingSkater = await SkaterModel.findOneByEmail(email);
         if (existingSkater) {
-            return res.status(400).json({ ok: false, msg: 'El email ya está registrado' });
+            return res.status(400).json({
+                ok: false,
+                msg: 'El email ya está registrado'
+            });
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -79,7 +93,16 @@ const register = async (req, res) => {
             foto: foto.name
         });
 
-        return res.status(201).json({ ok: true, skater });
+        const token = jwt.sign(
+            { email: skater.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        return res.status(200).json({
+            token,
+            email: skater.email
+        });
     } catch (error) {
         console.log(error);
         const { code, msg } = handleErrorDatabase(error);
@@ -92,7 +115,6 @@ const updateSkater = async (req, res) => {
     try {
         const { email, nombre, password, anos_experiencia, especialidad } = req.body;
 
-        // Generar nuevo hash de la contraseña si se proporciona
         let hashedPassword;
         if (password) {
             const salt = await bcrypt.genSalt(10);
